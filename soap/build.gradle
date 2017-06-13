@@ -1,0 +1,79 @@
+configurations {
+	jaxb
+}
+buildscript {
+	ext {
+		springBootVersion = '1.5.4.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+task genJaxb {
+//	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+	ext.sourcesDir = "${projectDir}/src/main/java"
+	ext.classesDir = "${buildDir}/classes/jaxb"
+	ext.schema = "http://www.webservicex.com/globalweather.asmx?wsdl"
+
+	outputs.dir classesDir
+
+	doLast() {
+		project.ant {
+			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+					classpath: configurations.jaxb.asPath
+			mkdir(dir: sourcesDir)
+			mkdir(dir: classesDir)
+
+			xjc(destdir: sourcesDir, schema: schema,
+					package: "ua.in.smartjava.soap") {
+				arg(value: "-wsdl")
+				produces(dir: sourcesDir, includes: "**/*.java")
+			}
+
+//			javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+//					debugLevel: "lines,vars,source",
+//					classpath: configurations.jaxb.asPath) {
+//				src(path: sourcesDir)
+//				include(name: "**/*.java")
+//				include(name: "*.java")
+//			}
+//
+//			copy(todir: classesDir) {
+//				fileset(dir: sourcesDir, erroronmissingdir: false) {
+//					exclude(name: "**/*.java")
+//				}
+//			}
+		}
+	}
+}
+
+jar {
+	baseName = 'gs-consuming-web-service'
+	version =  '0.1.0'
+
+	from genJaxb.classesDir
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web-services')
+	compile("org.springframework.ws:spring-ws-core")
+	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+	compile(files(genJaxb.classesDir).builtBy(genJaxb))
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
