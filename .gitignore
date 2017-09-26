@@ -27,7 +27,10 @@ IntelliJ IDEA ###
 classes
 
 .gradle
-.idea
+build
+out
+gradle
+!gradle/wrapper/gradle-wrapper.jar
 
 .DS_Store
 
