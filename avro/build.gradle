@@ -1,13 +1,3 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-        mavenLocal()
-    }
-    dependencies {
-    }
-}
-
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
@@ -15,9 +5,8 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    jcenter()
 }
+
 dependencies {
     compile group: 'org.apache.avro', name: 'avro', version: '1.8.2'
-
 }
