@@ -1,0 +1,7 @@
+{"namespace": "ua.com.smartjava.data",
+    "name": "Cat",
+    "type": "record",
+    "fields" : [
+        {"name": "breed", "type": "Breed"}
+    ]
+}

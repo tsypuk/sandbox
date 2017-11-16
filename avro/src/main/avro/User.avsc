@@ -1,4 +1,4 @@
-{"namespace": "example.avro",
+{"namespace": "ua.com.smartjava.data",
  "type": "record",
  "name": "User",
  "fields": [

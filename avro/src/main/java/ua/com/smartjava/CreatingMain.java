@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import ua.com.smartjava.data.User;
+
 public class CreatingMain {
     public static void main(String[] args) throws IOException {
         User user1 = new User();
