@@ -1,4 +1,4 @@
-package example.avro;
+package ua.com.smartjava;
 
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;

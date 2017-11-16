@@ -1,12 +1,21 @@
 apply plugin: 'java'
+apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 dependencies {
-    compile group: 'org.apache.avro', name: 'avro', version: '1.8.2'
+    implementation 'org.apache.avro:avro:1.8.2'
 }
