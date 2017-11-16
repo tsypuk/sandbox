@@ -43,3 +43,4 @@ gradle
 #### Logs ###
 #logs/
 #*.logs_err_pid*
+.avro
