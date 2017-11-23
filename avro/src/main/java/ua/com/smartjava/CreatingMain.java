@@ -15,6 +15,16 @@ import ua.com.smartjava.data.User;
 
 public class CreatingMain {
     public static void main(String[] args) throws IOException {
+
+
+        Number[] ints = new Number[2];
+
+        ints[0] = 2.2;
+        int[] ints1 = new int[3];
+
+        Integer[] test = new Integer[2];
+
+
         User user1 = new User();
         user1.setName("Alyssa");
         user1.setFavoriteNumber(256);

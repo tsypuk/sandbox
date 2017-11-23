@@ -24,11 +24,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter",
-            "org.springframework:spring-web",
-            "com.fasterxml.jackson.core:jackson-databind",
-            "io.projectreactor:reactor-bus",
-            'com.github.javafaker:javafaker:0.13'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework:spring-web'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'io.projectreactor:reactor-bus'
+    compile 'com.github.javafaker:javafaker:0.13'
     compileOnly('org.projectlombok:lombok')
 
     testCompile("junit:junit")
