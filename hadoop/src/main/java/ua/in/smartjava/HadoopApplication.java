@@ -33,9 +33,9 @@ public class HadoopApplication implements CommandLineRunner {
         );
 //pg1661.txt
 
-        RunningJob watsonsJob = createJob(jobWatsonWordsCount(), "watson search", "doyle");
-        RunningJob allWordsJob = createJob(jobAllWordsCount(), "all words usage search", "doyle");
-        RunningJob lettersJob = createJob(jobAllLetterCount(), "all letters usage search", "doyle");
+        RunningJob watsonsJob = createJob(jobWatsonWordsCount(), "watson search", "doyle.txt");
+        RunningJob allWordsJob = createJob(jobAllWordsCount(), "all words usage search", "doyle.txt");
+        RunningJob lettersJob = createJob(jobAllLetterCount(), "all letters usage search", "doyle.txt");
         watsonsJob.waitForCompletion();
         allWordsJob.waitForCompletion();
         lettersJob.waitForCompletion();

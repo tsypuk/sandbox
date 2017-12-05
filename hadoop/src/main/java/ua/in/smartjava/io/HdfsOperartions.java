@@ -39,14 +39,14 @@ public class HdfsOperartions {
     }
 
     public static void main(String[] args) throws Exception {
-        String fileName = "hdfs://cloudera-1:8020/user/root/pg1661.txt";
+        String fileName = "hdfs://cloudera-1:8020/user/root/doyle.txt";
         Configuration conf = new Configuration();
         URI uri = URI.create(fileName);
 
 //        readWithInputStream(uri, conf);
 //        copyLocalToHdfs("/tmp/wifi-12-04-2017__10:56:52.log", "hdfs://cloudera-1:8020/user/root/pg1661.txt");
-//        loadConanDoyleStoriesToHdfs();
-        getStatus();
+        loadConanDoyleStoriesToHdfs();
+//        getStatus();
 //        copyWebToHdfs(new URL("http://www.textfiles.com/etext/AUTHORS/DOYLE/agrange.txt"),
 // "hdfs://cloudera-1:8020/user/root/doyle");
 //        readWithFSDataInputStream(uri, conf);
@@ -56,7 +56,8 @@ public class HdfsOperartions {
     private static void loadConanDoyleStoriesToHdfs() {
         Stream.of(stories).map(story -> "http://www.textfiles.com/etext/AUTHORS/DOYLE/" + story)
                 .peek(System.out::println)
-                .forEach(url -> copyWebToHdfs(map(url), "hdfs://cloudera-1:8020/user/root/doyle"));
+//                .skip(1)
+                .forEach(url -> copyWebToHdfs(map(url), "hdfs://cloudera-1:8020/user/root/doyle.txt"));
     }
 
     private static URL map(String url) {
@@ -98,7 +99,7 @@ public class HdfsOperartions {
         FileSystem fs = FileSystem.get(URI.create(dst), conf, "hdfs");
         OutputStream out = fs.append(new Path(dst), BUFFER_SIZE, () -> System.out.print("."));
 
-        IOUtils.copyBytes(in, out, 4096, true);
+        IOUtils.copyBytes(in, out, 4096, false);
     }
 
     private static void copyWebToHdfs(URL webUri, String dst) {
@@ -110,11 +111,20 @@ public class HdfsOperartions {
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
             if (!fs.exists(new Path(dst))) {
-                fs.create(new Path(dst));
+                createNewFile(dst);
             }
-            OutputStream out = fs.append(new Path(dst), BUFFER_SIZE, () -> System.out.print("."));
+            OutputStream out = fs.append(new Path(dst), BUFFER_SIZE);
 
             IOUtils.copyBytes(in, out, 4096, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void createNewFile(String dst) {
+        Configuration conf = new Configuration();
+        try (FileSystem fs = FileSystem.get(URI.create(dst), conf, "hdfs")) {
+            fs.create(new Path(dst));
         } catch (Exception e) {
             e.printStackTrace();
         }

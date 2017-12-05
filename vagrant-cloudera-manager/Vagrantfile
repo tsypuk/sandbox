@@ -30,6 +30,8 @@ chmod a+x mysqlsec.sh
 mysql -u root -e "create database scm" mysql
 mysql -u root -e "create database hive" mysql
 mysql -u root -e "create database oozie" mysql
+mysql -u root -e "create database activity" mysql
+mysql -u root -e "create database report" mysql
 mysql -u root -e "create database hue" mysql
 mysql -u root -e "grant all on *.* to 'scm'@'%' identified by 'scm' with grant option;" mysql
 

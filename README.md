@@ -56,5 +56,27 @@ numChildren = 0
 [zookeeper]
 [zkshell: 18]
 ```
+
+## hadoop
+
+### inside cluster
+```
+ssh root@clouder-1
+sudo -u hdfs hadoop fs -mkdir /user/root
+sudo -u hdfs hadoop fs -chown root /user/root
+
+hadoop namenode -format
+```
+### from client machine
+```
+export HADOOP_USER_NAME=hdfs
+
+hadoop fs -mkdir hdfs://cloudera-1:8020/user/root/
+hadoop fs -ls hdfs://cloudera-1:8020/user/root/
+hadoop fs -chown root hdfs://cloudera-1:8020/user/root/
+/user/hdfs/.Trash/Current/user/root/doyle1512506113907
+hadoop fs -cat hdfs://cloudera-1:8020/user/root/pg1661.txt
+echo "Line-to-add" | hadoop hdfs dfs -appendToFile hdfs://cloudera-1:8020/user/root/doyle
+```
 TODO
 [ ] - add gradle dependency to generate class with task
