@@ -12,8 +12,10 @@ buildscript {
 }
 
 repositories {
+    jcenter()
     maven {
-        url 'https://repo.spring.io/libs-release'
+//        url 'http://repo.spring.io/libs-release',
+        url 'http://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/00142c9'
     }
 }
 
@@ -22,10 +24,16 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
+//    compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
     compile 'org.springframework.data:spring-data-elasticsearch:3.0.1.RELEASE'
-    compile 'net.java.dev.jna:jna:4.5.0'
-    compileOnly('org.projectlombok:lombok')
 
-    testCompile("junit:junit")
+//    compile 'org.elasticsearch.client:transport:5.5.0'
+    compile 'elasticsearch:elasticsearch:5.5.0'
+    compile 'org.elasticsearch.client:elasticsearch-rest-client:6.0.0'
+    compile 'net.java.dev.jna:jna:4.5.0'
+    compileOnly 'org.projectlombok:lombok'
+
+    testCompile 'junit:junit'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 

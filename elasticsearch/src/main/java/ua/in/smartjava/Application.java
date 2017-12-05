@@ -1,21 +1,18 @@
 package ua.in.smartjava;
 
-import org.elasticsearch.client.Client;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    @Autowired
-    private ElasticsearchOperations es;
 
     @Autowired
     private BookService bookService;
@@ -26,7 +23,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
+/*
         printElasticSearchInfo();
 
         bookService.save(new Book("1001", "Elasticsearch Basics", "Rambabu Posa", "23-FEB-2017"));
@@ -39,21 +36,29 @@ public class Application implements CommandLineRunner {
         //List<Book> books = bookService.findByTitle("Elasticsearch Basics");
 
         books.forEach(x -> System.out.println(x));
-
+*/
 
     }
 
     //useful for debug, print elastic search details
     private void printElasticSearchInfo() {
 
-        System.out.println("--ElasticSearch--");
-        Client client = es.getClient();
-        Map<String, String> asMap = client.settings().getAsMap();
+//        System.out.println("--ElasticSearch--");
+//        Client client = es.getClient();
+//        Map<String, String> asMap = client.settings().getAsMap();
+//
+//        asMap.forEach((k, v) -> {
+//            System.out.println(k + " = " + v);
+//        });
+//        System.out.println("--ElasticSearch--");
+    }
 
-        asMap.forEach((k, v) -> {
-            System.out.println(k + " = " + v);
-        });
-        System.out.println("--ElasticSearch--");
+    @Bean
+    public RestClient restHighLevelClient() {
+        return
+                RestClient.builder(
+                        new HttpHost("localhost", 9200, "http")
+                ).build();
     }
 
 }

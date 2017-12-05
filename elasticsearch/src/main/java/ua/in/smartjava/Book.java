@@ -2,7 +2,10 @@ package ua.in.smartjava;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import lombok.Data;
+
 @Document(indexName = "mkyong", type = "books")
+@Data
 public class Book {
 
     @Id
@@ -20,8 +23,6 @@ public class Book {
         this.author = author;
         this.releaseDate = releaseDate;
     }
-
-    //getters and setters
 
     @Override
     public String toString() {
