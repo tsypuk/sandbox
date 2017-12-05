@@ -28,8 +28,11 @@ chmod a+x mysqlsec.sh
 ./mysqlsec.sh
 
 mysql -u root -e "create database scm" mysql
+mysql -u root -e "create database hive" mysql
+mysql -u root -e "create database oozie" mysql
+mysql -u root -e "create database hue" mysql
 mysql -u root -e "grant all on *.* to 'scm'@'%' identified by 'scm' with grant option;" mysql
-# TODO create databases for hive, oozie, hue and other components
+
 SCRIPT
 
 $manager_script = <<SCRIPT
@@ -69,7 +72,7 @@ Vagrant.configure("2") do |config|
     	master.vm.provider :virtualbox do |v|
       		v.name = "cloudera-1"
       		v.customize ["modifyvm", :id, "--memory", "8192"]
-		v.customize ["modifyvm", :id, "--cpus", 2]
+		    v.customize ["modifyvm", :id, "--cpus", 2]
     	end
     	master.vm.network :private_network, ip: "10.211.55.101"
     	master.vm.hostname = "cloudera-1"
@@ -104,6 +107,8 @@ Vagrant.configure("2") do |config|
     	node3.vm.provision :shell, :inline => $hosts_script
     	node3.vm.provision :hostmanager
   	end
+
+#   4 node is overkill for note
 #  	config.vm.define :node4 do |node4|
 #    	node4.vm.provider :virtualbox do |v|
 #      		v.name = "cloudera-4"
