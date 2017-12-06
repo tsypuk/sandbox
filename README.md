@@ -63,8 +63,11 @@ numChildren = 0
 ```
 ssh root@clouder-1
 sudo -u hdfs hadoop fs -mkdir /user/root
+```
+change permissions:
+```
 sudo -u hdfs hadoop fs -chown root /user/root
-
+```
 hadoop namenode -format
 ```
 ### from client machine
