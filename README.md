@@ -67,7 +67,6 @@ sudo -u hdfs hadoop fs -mkdir /user/root
 change permissions:
 ```
 sudo -u hdfs hadoop fs -chown root /user/root
-```
 hadoop namenode -format
 ```
 ### from client machine
@@ -80,6 +79,11 @@ hadoop fs -chown root hdfs://cloudera-1:8020/user/root/
 /user/hdfs/.Trash/Current/user/root/doyle1512506113907
 hadoop fs -cat hdfs://cloudera-1:8020/user/root/pg1661.txt
 echo "Line-to-add" | hadoop hdfs dfs -appendToFile hdfs://cloudera-1:8020/user/root/doyle
+```
+### Compression codecs
+After running job with compression view the results
+```
+gunzip -c part-00000.gz| less
 ```
 TODO
 [ ] - add gradle dependency to generate class with task

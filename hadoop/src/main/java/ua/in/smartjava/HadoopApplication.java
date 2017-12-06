@@ -3,6 +3,7 @@ package ua.in.smartjava;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.mapred.jobcontrol.Job;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class HadoopApplication implements CommandLineRunner {
         JobConf jobConfig = new JobConf();
         jobConfig.setJarByClass(HadoopApplication.class);
 
-        jobConfig.setJobName("All words search");
+        jobConfig.setJobName("watson search");
         jobConfig.setMapperClass(WordMapper.class);
         jobConfig.setReducerClass(WordReducer.class);
         jobConfig.setOutputKeyClass(Text.class);
@@ -57,11 +58,13 @@ public class HadoopApplication implements CommandLineRunner {
         JobConf jobConfig = new JobConf();
         jobConfig.setJarByClass(HadoopApplication.class);
 
-        jobConfig.setJobName("Watsons search");
+        jobConfig.setJobName("all words usage search");
         jobConfig.setMapperClass(WordMapper.class);
         jobConfig.setReducerClass(AllWordReducer.class);
         jobConfig.setOutputKeyClass(Text.class);
         jobConfig.setOutputValueClass(IntWritable.class);
+        FileOutputFormat.setCompressOutput(jobConfig, true);
+        FileOutputFormat.setOutputCompressorClass(jobConfig, GzipCodec.class);
         return jobConfig;
     }
 
