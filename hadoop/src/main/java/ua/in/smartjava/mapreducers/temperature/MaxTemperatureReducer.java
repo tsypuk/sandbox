@@ -9,23 +9,15 @@ import java.util.Iterator;
 
 public class MaxTemperatureReducer implements Reducer<Text, IntWritable, Text, IntWritable> {
 
-    protected static final String TARGET_WORD = "Watson";
-
-    private boolean containsTargetWord(Text key) {
-        return key.toString().equals(TARGET_WORD);
-    }
-
     @Override
-    public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> outputCollector, Reporter reporter) throws IOException {
-        System.out.println("Reducer processing");
-        if (containsTargetWord(key)) {
-            int wordCount = 0;
-            for (Iterator<IntWritable> it = values; it.hasNext(); ) {
-                IntWritable value = it.next();
-                wordCount += value.get();
-            }
-            outputCollector.collect(key, new IntWritable(wordCount));
+    public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> outputCollector,
+                       Reporter reporter) throws IOException {
+        int maxValue = Integer.MIN_VALUE;
+        for (Iterator<IntWritable> it = values; it.hasNext(); ) {
+            IntWritable value = it.next();
+            maxValue = Math.max(maxValue, value.get());
         }
+        outputCollector.collect(key, new IntWritable(maxValue));
     }
 
     @Override

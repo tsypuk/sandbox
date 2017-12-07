@@ -10,14 +10,23 @@ import java.io.IOException;
 public class MaxTemperatureMapper implements Mapper<LongWritable, Text, Text, IntWritable> {
 
     private static final int MISSING = 9999;
+
     @Override
-    public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> outputCollector, Reporter reporter) throws IOException {
+    public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> outputCollector, Reporter
+            reporter) throws IOException {
 
         int count = 0;
-        System.out.println("Mapper processing");
         String line = value.toString();
         String year = line.substring(15, 19);
-        outputCollector.collect(new Text(year), new IntWritable(count));
+        String temp = line.substring(87, 92);
+        if (!missing(temp)) {
+            int airTemperature = Integer.parseInt(temp);
+            outputCollector.collect(new Text(year), new IntWritable(airTemperature));
+        }
+    }
+
+    private boolean missing(String temp) {
+        return temp.equals("+9999");
     }
 
     @Override
