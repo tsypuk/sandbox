@@ -85,6 +85,11 @@ After running job with compression view the results
 ```
 gunzip -c part-00000.gz| less
 ```
+### Sequence
+```
+hadoop fs -text numbers.seq | head
+hadoop fs -text hdfs://cloudera-1:8020/user/root/sequence.seq
+```
 
 ## Hive
 dataset:

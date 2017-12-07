@@ -6,6 +6,9 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.Text;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -120,7 +123,6 @@ public class HdfsOperartions {
             e.printStackTrace();
         }
     }
-
     private static void createNewFile(String dst) {
         Configuration conf = new Configuration();
         try (FileSystem fs = FileSystem.get(URI.create(dst), conf, "hdfs")) {
