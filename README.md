@@ -85,5 +85,25 @@ After running job with compression view the results
 ```
 gunzip -c part-00000.gz| less
 ```
+
+## Hive
+dataset:
+```
+https://raw.githubusercontent.com/hortonworks/data-tutorials/master/tutorials/hdp/interactive-query-for-hadoop-with-apache-hive-on-apache-tez/assets/driver_data.zip
+```
+create Hive tables:
+```
+create table drivers
+(driverId int,
+ name string,
+ ssn bigint,
+ location string,
+ certified string,
+ wageplan string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+TBLPROPERTIES("skip.header.line.count"="1");
+```
 TODO
 [ ] - add gradle dependency to generate class with task
