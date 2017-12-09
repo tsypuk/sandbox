@@ -51,7 +51,7 @@ public class AvroWriterTest {
 
     @Test
     public void test1() throws IOException {
-        Schema schema = new AvroWriter().getSchema();
+        Schema schema = new AvroWriter().getSchema("avro/StringPair.avsc");
         File file = new File("data.avro");
         DatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
         DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(writer);

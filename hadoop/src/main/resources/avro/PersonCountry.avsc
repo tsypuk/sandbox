@@ -1,0 +1,9 @@
+{"namespace": "ua.in.smartjava.generated",
+  "type": "record",
+  "name": "PersonCountry",
+  "doc": "Some person from the world.",
+  "fields": [
+    {"name": "name", "type": "string"},
+    {"name": "country", "type": "string"}
+  ]
+}
