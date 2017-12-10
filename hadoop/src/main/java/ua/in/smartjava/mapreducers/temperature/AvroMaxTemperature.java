@@ -28,18 +28,19 @@ import org.apache.hadoop.util.ToolRunner;
 import ua.in.smartjava.generated.WeatherRecord;
 
 public class AvroMaxTemperature extends Configured implements Tool {
-    private static final Schema SCHEMA = new Schema.Parser().parse(
-            "{" +
-                    "  \"type\": \"record\"," +
-                    "  \"name\": \"WeatherRecord\"," +
-                    "  \"doc\": \"A weather reading.\"," +
-                    "  \"fields\": [" +
-                    "    {\"name\": \"year\", \"type\": \"int\"}," +
-                    "    {\"name\": \"temperature\", \"type\": \"int\"}," +
-                    "    {\"name\": \"stationId\", \"type\": \"string\"}" +
-                    "  ]" +
-                    "}"
-    );
+    private static final Schema SCHEMA = WeatherRecord.getClassSchema();
+//            new Schema.Parser().parse(
+//            "{" +
+//                    "  \"type\": \"record\"," +
+//                    "  \"name\": \"WeatherRecord\"," +
+//                    "  \"doc\": \"A weather reading.\"," +
+//                    "  \"fields\": [" +
+//                    "    {\"name\": \"year\", \"type\": \"int\"}," +
+//                    "    {\"name\": \"temperature\", \"type\": \"int\"}," +
+//                    "    {\"name\": \"stationId\", \"type\": \"string\"}" +
+//                    "  ]" +
+//                    "}"
+//    );
 
     public static class MaxTemperatureMapperFromNcdc extends Mapper<LongWritable, Text, AvroKey<Integer>,
             AvroValue<GenericRecord>> {
@@ -54,8 +55,8 @@ public class AvroMaxTemperature extends Configured implements Tool {
                 record.put("year", parser.getYearInt());
                 record.put("temperature", parser.getAirTemperature());
                 record.put("stationId", parser.getStationId());
-                context.write(new AvroKey<Integer>(parser.getYearInt()),
-                        new AvroValue<GenericRecord>(record));
+                context.write(new AvroKey<>(parser.getYearInt()),
+                        new AvroValue<>(record));
             }
         }
     }
@@ -71,8 +72,8 @@ public class AvroMaxTemperature extends Configured implements Tool {
             record.put("year", key.datum().get("year"));
             record.put("temperature", key.datum().get("temperature"));
             record.put("stationId", key.datum().get("stationId"));
-            context.write(new AvroKey<Integer>((Integer) key.datum().get("year")),
-                    new AvroValue<GenericRecord>(record));
+            context.write(new AvroKey<>((Integer) key.datum().get("year")),
+                    new AvroValue<>(record));
         }
     }
 
@@ -134,8 +135,7 @@ public class AvroMaxTemperature extends Configured implements Tool {
         Job job = new Job(getConf(), "Max temperature avro");
         job.setJarByClass(getClass());
 
-        job.getConfiguration().setBoolean(
-                Job.MAPREDUCE_JOB_USER_CLASSPATH_FIRST, true);
+        job.getConfiguration().setBoolean(Job.MAPREDUCE_JOB_USER_CLASSPATH_FIRST, true);
 
         FileInputFormat.addInputPath(job, new Path("hdfs://cloudera-1:8020/user/root/weather.avro"));
         FileOutputFormat.setOutputPath(job, new Path("/tmp/results/avro"));
@@ -150,9 +150,9 @@ public class AvroMaxTemperature extends Configured implements Tool {
 //        job.setMapperClass(MaxTemperatureMapperFromNcdc.class);
         job.setInputFormatClass(AvroKeyInputFormat.class);
         job.setMapperClass(MaxTemperatureMapper.class);
+        job.setReducerClass(MaxTemperatureReducer.class);
 //        job.setMapperClass(MaxTemperatureMapperGeneric.class);
 //        job.setReducerClass(MaxTemperatureReducerGeneric.class);
-        job.setReducerClass(MaxTemperatureReducer.class);
 
         return job.waitForCompletion(true) ? 0 : 1;
     }
