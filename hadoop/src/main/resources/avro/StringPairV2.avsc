@@ -1,0 +1,10 @@
+{"namespace": "ua.in.smartjava.generated",
+  "type": "record",
+  "name": "StringPairV2",
+  "doc": "A pair of strings with an added field.",
+  "fields": [
+    {"name": "left", "type": "string"},
+    {"name": "right", "type": "string"},
+    {"name": "description", "type": "string", "default": ""}
+  ]
+}

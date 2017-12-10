@@ -8,7 +8,7 @@ import org.apache.hadoop.mrunit.MapDriver;
 import org.apache.hadoop.mrunit.ReduceDriver;
 import org.junit.*;
 
-public class MaxTemperatureMapperTest {
+public class MaxTemperatureMapperFromNcdcTest {
 
     @Test
     public void processesValidRecord() throws IOException, InterruptedException {

@@ -11,20 +11,42 @@ import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.Locale;
+import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import ua.in.smartjava.generated.PersonCountry;
 import ua.in.smartjava.generated.StringPair;
+import ua.in.smartjava.generated.WeatherRecord;
 
 public class AvroWriter {
 
-    private Faker faker = new Faker(Locale.UK);
+    private static final Faker faker = new Faker(Locale.UK);
+    private static final Random random = new Random();
+
+    private static final Supplier<PersonCountry> personFakerSupplier = () ->
+            PersonCountry.newBuilder()
+                    .setName(faker.name())
+                    .setCountry(faker.lastName()).build();
+
+    private static final Supplier<WeatherRecord> weatherFakerSupplier = () ->
+            WeatherRecord.newBuilder()
+                    .setTemperature(random.nextInt(50))
+                    .setYear(2017)
+                    .setStationId("home")
+                    .build();
 
     public void write() throws IOException {
         Schema schema = getSchema("avro/StringPair.avsc");
@@ -41,32 +63,45 @@ public class AvroWriter {
         out.close();
     }
 
-    public void generateFakeData(int count) throws Exception {
-        Schema schema = getSchema("avro/PersonCountry.avsc");
-        File file = new File("person.avro");
+    public void generateFakeData(int count, String schemaName, String fileName, Supplier<? extends GenericRecord>
+            supplier) throws Exception {
+        Schema schema = getSchema(schemaName);
 
-        DatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
+        Configuration conf = new Configuration();
+        try (FileSystem fs = FileSystem.get(URI.create(fileName), conf, "hdfs")) {
+            if (!fs.exists(new Path(fileName))) {
+                createNewFile(fileName);
+            }
+            FSDataOutputStream outputStream = fs.create(new Path(fileName));
 
-        try (DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(writer)) {
-            dataFileWriter.create(schema, file);
+            DatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
 
-            Stream.generate(personFakerSupplier)
-                    .limit(count)
-                    .forEach(person -> appendToDataFile(dataFileWriter, person));
+            try (DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(writer)) {
+                dataFileWriter.create(schema, outputStream);
+
+                Stream.generate(supplier)
+                        .limit(count)
+                        .forEach(person -> appendToDataFile(dataFileWriter, person));
+            }
         }
     }
 
-    private void appendToDataFile(DataFileWriter<GenericRecord> dataFileWriter, GenericRecord stringPair) {
+    private void appendToDataFile(DataFileWriter<GenericRecord> dataFileWriter, GenericRecord genericRecord) {
         try {
-            dataFileWriter.append(stringPair);
+            dataFileWriter.append(genericRecord);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    Supplier<PersonCountry> personFakerSupplier = () -> PersonCountry.newBuilder()
-            .setName(faker.name())
-            .setCountry(faker.lastName()).build();
+    private static void createNewFile(String dst) {
+        Configuration conf = new Configuration();
+        try (FileSystem fs = FileSystem.get(URI.create(dst), conf, "hdfs")) {
+            fs.create(new Path(dst));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public Schema getSchema(String schemaFile) throws IOException {
         Schema.Parser parser = new Schema.Parser();
@@ -77,6 +112,8 @@ public class AvroWriter {
     }
 
     public static void main(String[] args) throws Exception {
-        new AvroWriter().generateFakeData(5_000);
+        new AvroWriter().generateFakeData(5_000, "avro/PersonCountry.avsc", "person.avro", personFakerSupplier);
+        new AvroWriter().generateFakeData(500_000, "avro/AvroTemperature.avsc",
+                "hdfs://cloudera-1:8020/user/root/weather.avro", weatherFakerSupplier);
     }
 }

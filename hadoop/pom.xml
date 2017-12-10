@@ -51,6 +51,17 @@
             <artifactId>avro</artifactId>
             <version>${avro.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-mapred</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-tools</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-minicluster -->
         <dependency>
@@ -90,9 +101,6 @@
         <resources>
             <resource>
                 <directory>/src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>../src/main/resources</directory>
             </resource>
         </resources>
         <plugins>
