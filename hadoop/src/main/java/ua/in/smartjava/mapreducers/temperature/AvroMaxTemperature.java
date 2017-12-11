@@ -2,6 +2,9 @@ package ua.in.smartjava.mapreducers.temperature;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.avro.Schema;
@@ -105,7 +108,6 @@ public class AvroMaxTemperature extends Configured implements Tool {
             }
             context.write(new AvroKey(max), NullWritable.get());
         }
-
     }
 
     private static WeatherRecord newWeatherRecord(GenericRecord value) {
@@ -131,6 +133,29 @@ public class AvroMaxTemperature extends Configured implements Tool {
         }
     }
 
+    public static class AvrTemperatureReducer extends Reducer<AvroKey<Integer>, AvroValue<GenericRecord>,
+            AvroKey<WeatherRecord>, NullWritable> {
+
+        @Override
+        protected void reduce(AvroKey<Integer> key, Iterable<AvroValue<GenericRecord>> values, Context context)
+                throws IOException, InterruptedException {
+            Set<String> stations = new HashSet<>();
+            Double avrTemp = StreamSupport.stream(values.spliterator(), false)
+                    .map(avroValue -> avroValue.datum())
+                    .map(AvroMaxTemperature::newWeatherRecord)
+                    .peek(weatherRecord -> stations.add(weatherRecord.getStationId().toString()))
+                    .mapToInt(weather -> weather.getTemperature())
+                    .average().getAsDouble();
+
+            WeatherRecord avrWeather = WeatherRecord.newBuilder()
+                    .setYear(key.datum())
+                    .setStationId(stations.stream().collect(Collectors.joining(", ")))
+                    .setTemperature(avrTemp.intValue())
+                    .build();
+            context.write(new AvroKey(avrWeather), NullWritable.get());
+        }
+    }
+
     public int run(String[] args) throws Exception {
         Job job = new Job(getConf(), "Max temperature avro");
         job.setJarByClass(getClass());
@@ -150,7 +175,8 @@ public class AvroMaxTemperature extends Configured implements Tool {
 //        job.setMapperClass(MaxTemperatureMapperFromNcdc.class);
         job.setInputFormatClass(AvroKeyInputFormat.class);
         job.setMapperClass(MaxTemperatureMapper.class);
-        job.setReducerClass(MaxTemperatureReducer.class);
+        job.setReducerClass(AvrTemperatureReducer.class);
+//        job.setReducerClass(MaxTemperatureReducer.class);
 //        job.setMapperClass(MaxTemperatureMapperGeneric.class);
 //        job.setReducerClass(MaxTemperatureReducerGeneric.class);
 

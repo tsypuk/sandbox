@@ -43,10 +43,17 @@ public class AvroWriter {
 
     private static final Supplier<WeatherRecord> weatherFakerSupplier = () ->
             WeatherRecord.newBuilder()
-                    .setTemperature(random.nextInt(50))
-                    .setYear(2017)
-                    .setStationId("home")
+                    .setTemperature(generatedRandomTemperature(-40, 40))
+                    .setYear(generateYear(1990, 27))
+                    .setStationId(faker.country())
                     .build();
+
+    private static final int generatedRandomTemperature(int min, int max) {
+        return min + random.nextInt(max - min);
+    }
+    private static final int generateYear(int startYear, int delta) {
+        return startYear + random.nextInt(delta);
+    }
 
     public void write() throws IOException {
         Schema schema = getSchema("avro/StringPair.avsc");
@@ -69,6 +76,7 @@ public class AvroWriter {
 
         Configuration conf = new Configuration();
         try (FileSystem fs = FileSystem.get(URI.create(fileName), conf, "hdfs")) {
+
             if (!fs.exists(new Path(fileName))) {
                 createNewFile(fileName);
             }
@@ -84,6 +92,7 @@ public class AvroWriter {
                         .forEach(person -> appendToDataFile(dataFileWriter, person));
             }
         }
+
     }
 
     private void appendToDataFile(DataFileWriter<GenericRecord> dataFileWriter, GenericRecord genericRecord) {
@@ -112,8 +121,8 @@ public class AvroWriter {
     }
 
     public static void main(String[] args) throws Exception {
-        new AvroWriter().generateFakeData(5_000, "avro/PersonCountry.avsc", "person.avro", personFakerSupplier);
-        new AvroWriter().generateFakeData(500_000, "avro/AvroTemperature.avsc",
+//        new AvroWriter().generateFakeData(5_000, "avro/PersonCountry.avsc", "person.avro", personFakerSupplier);
+        new AvroWriter().generateFakeData(1_000_000, "avro/AvroTemperature.avsc",
                 "hdfs://cloudera-1:8020/user/root/weather.avro", weatherFakerSupplier);
     }
 }
