@@ -1,4 +1,4 @@
-package ua.in.smartjava.dataformats;
+package ua.in.smartjava.dataformats.avro;
 
 import com.github.javafaker.Faker;
 
@@ -16,11 +16,8 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Random;
@@ -28,7 +25,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import ua.in.smartjava.generated.PersonCountry;
-import ua.in.smartjava.generated.StringPair;
 import ua.in.smartjava.generated.WeatherRecord;
 
 public class AvroWriter {

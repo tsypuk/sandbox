@@ -1,5 +1,6 @@
 package ua.in.smartjava.dataformats;
 
+import ua.in.smartjava.dataformats.avro.AvroWriter;
 import ua.in.smartjava.generated.StringPair;
 
 import org.apache.avro.Schema;

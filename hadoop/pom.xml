@@ -26,6 +26,7 @@
         <java.version>1.8</java.version>
         <assertj.version>3.8.0</assertj.version>
         <avro.version>1.8.2</avro.version>
+        <parquet.twitter.version>1.6.0</parquet.twitter.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,16 @@
             <version>${avro.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-tools</artifactId>
+            <version>${parquet.twitter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>${parquet.twitter.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-minicluster -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
