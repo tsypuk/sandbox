@@ -302,6 +302,41 @@ value 6:      R:0 D:0 V:314
 value 7:      R:0 D:0 V:392
 ```
 ### Hive
+create table
+```
+CREATE TABLE logs (ts BIGINT, line STRING)
+PARTITIONED BY (dt STRING, country STRING);
+```
+```
+LOAD DATA LOCAL INPATH '/input/hive/partitions/file1'
+INTO TABLE logs
+PARTITION (dt = '2017-12-14', country = 'US')
+```
+```
+LOAD DATA LOCAL INPATH '/input/hive/partitions/file2'
+INTO TABLE logs
+PARTITION (dt = '2017-12-14', country = 'UA')
+```
+...
+```
+LOAD DATA LOCAL INPATH '/input/hive/partitions/file6'
+INTO TABLE logs
+PARTITION (dt = '2017-12-15', country = 'US')
+```
+clustered buckets
+```
+CREATE table users (id INT, name STRING)
+ROW FORMAT DELIMITED
+  FIELDS TERMINATED BY ',';
+
+LOAD DATA LOCAL INPATH '/input/hive/tables/users.txt' OVERWRITE INTO TABLE users;
+```
+```
+CREATE TABLE bucketed_users (id INT, name STRING)
+CLUSTERED BY (id) SORTED BY (id ASC) INTO 4 BUCKETS;
+```
+
+
 dataset:
 ```
 https://raw.githubusercontent.com/hortonworks/data-tutorials/master/tutorials/hdp/interactive-query-for-hadoop-with-apache-hive-on-apache-tez/assets/driver_data.zip
