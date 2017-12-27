@@ -49,7 +49,7 @@ public class SpringKafkaApplicationTest {
 
   @Test
   public void testReceive() throws Exception {
-    sender.send(TOPIC, "Kafka!");
+    sender.sendFireAndForget(TOPIC, "Kafka!");
 
     receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
     assertThat(receiver.getLatch().getCount()).isEqualTo(0);

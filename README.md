@@ -355,7 +355,32 @@ FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
 TBLPROPERTIES("skip.header.line.count"="1");
 ```
+### Kafka
+2 Docker compose files are prepared. For single node app and for cluster with schema registry from confluent.
+```
+docker-compose up -d
+docker-compose logs kafka
+docker-compose logs zookeeper
+```
 
+```
+docker-compose exec kafka  \
+kafka-topics --create --topic foo --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:32181
+```
+```
+docker-compose exec kafka  \
+bash -c "seq 42 | kafka-console-producer --request-required-acks 1 --broker-list localhost:9092 --topic foo && echo 'Produced 42 messages.'"
+```
+
+```
+docker-compose exec kafka  \
+kafka-topics --zookeeper zookeeper:32181 --describe
+```
+
+```
+docker-compose exec kafka  \
+kafka-console-consumer --bootstrap-server localhost:9092 --topic foo --from-beginning --max-messages 200
+```
 
 TODO
 [ ] - add gradle dependency to generate class with task
