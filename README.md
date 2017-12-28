@@ -382,5 +382,62 @@ docker-compose exec kafka  \
 kafka-console-consumer --bootstrap-server localhost:9092 --topic foo --from-beginning --max-messages 200
 ```
 
+### HBase
+
+```
+create 'wiki', 'text'
+put 'wiki', 'Home', 'text:', 'Welcome to the wiki!'
+```
+```
+hbase(main):006:0> get 'wiki', 'Home', 'text:'
+COLUMN                                               CELL
+ text:                                               timestamp=1514479499563, value=Welcome to the wiki!
+1 row(s) in 0.0450 seconds
+```
+Offline table
+```
+disable 'wiki'
+```
+Save versions for column text
+```
+hbase(main):002:0> alter 'wiki', { NAME => 'text', VERSIONS => org.apache.hadoop.hbase.HConstants::ALL_VERSIONS }
+Updating all regions with the new schema...
+1/1 regions updated.
+Done.
+0 row(s) in 2.5520 seconds
+```
+online table
+```
+hbase(main):003:0> enable 'wiki'
+0 row(s) in 1.3460 seconds
+```
+View versioned data
+```
+hbase(main):005:0> get 'wiki', 'Home', 'text:'
+COLUMN                                               CELL
+ text:                                               timestamp=1514480086285, value=New value
+1 row(s) in 0.0500 seconds
+
+hbase(main):006:0> get 'wiki', 'Home', { COLUMN => 'text', VERSIONS => 4 }
+COLUMN                                               CELL
+ text:                                               timestamp=1514480086285, value=New value
+ text:                                               timestamp=1514479580690, value=Welcome to the wiki!!!
+2 row(s) in 0.0340 seconds
+```
+Information about region servers, start-end key for each region
+```
+hbase(main):013:0> scan 'hbase:meta', { COLUMNS => [ 'info:server', 'info:regioninfo' ] }
+ROW                                                  COLUMN+CELL
+ hbase:namespace,,1514479202888.be73f944f35d098ec43a column=info:regioninfo, timestamp=1514484560319, value={ENCODED => be73f944f35d098ec43a52a5fc176563, NAME => 'hbase:namespace,,1514479202888.be73f944f3
+ 52a5fc176563.                                       5d098ec43a52a5fc176563.', STARTKEY => '', ENDKEY => ''}
+ hbase:namespace,,1514479202888.be73f944f35d098ec43a column=info:server, timestamp=1514484560319, value=cloudera-3:60020
+ 52a5fc176563.
+ wiki,,1514479359964.a50e2df546fdb6cfb8cca7ded831318 column=info:regioninfo, timestamp=1514484560475, value={ENCODED => a50e2df546fdb6cfb8cca7ded8313186, NAME => 'wiki,,1514479359964.a50e2df546fdb6cfb8cca
+ 6.                                                  7ded8313186.', STARTKEY => '', ENDKEY => ''}
+ wiki,,1514479359964.a50e2df546fdb6cfb8cca7ded831318 column=info:server, timestamp=1514484560475, value=cloudera-3:60020
+ 6.
+2 row(s) in 0.0450 seconds
+```
+
 TODO
 [ ] - add gradle dependency to generate class with task
