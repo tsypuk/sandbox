@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package in.ua.smartjava.grpc;
+
+option java_multiple_files = true;
+enum Sentiment {
+    HAPPY = 0;
+    SLEEPY = 1;
+    ANGRY = 2;
+}
+
+message HelloRequest {
+    string firstname = 1;
+    string lastname = 2;
+    int64 age = 3;
+    Sentiment sentiment = 4;
+    repeated string hoobies = 5;
+    map<string, string> bagOfTricks = 6;
+}
+
+message HelloResponse {
+    string greeting = 1;
+}
+
+service GreetingService {
+    rpc greeting(HelloRequest) returns (HelloResponse);
+}
